@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  frontend:
+    container_name: "frontend-live"
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/frontend:Z
+
+  recorder:
+    container_name: "recorder-live"
+    build:
+      context: ./recorder
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    command: >
+      sh -c "tail -f /dev/null"
+    volumes:
+      - ./recorder:/recorder:Z
+      - ./record_volume:/usr/src/recorder/output
+
+  nginx-ssl:
+    image: valian/docker-nginx-auto-ssl
+    restart: on-failure
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./ssl_data:/etc/resty-auto-ssl
+    environment:
+      ALLOWED_DOMAINS: '127.0.0.1'
+      SITES: '127.0.0.1=nginx:80'
+
+  nginx:
+    container_name: nginx-live
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    depends_on:
+      - frontend
+      - recorder
+
+volumes:
+  ssl_data:

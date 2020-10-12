@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  frontend:
+    container_name: "frontend-live"
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/frontend:Z
+    command: >
+      sh -c "tail -f /dev/null && npm run serve"
+
+  nginx:
+    container_name: nginx-live
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./media_volume:/uploads
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+      - recorder
+
+  recorder:
+    container_name: "recorder-live"
+    build:
+      context: ./recorder
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    command: >
+      sh -c "tail -f /dev/null"
+    volumes:
+      - ./recorder:/recorder:Z
+      - ./record_volume:/usr/src/recorder/output
