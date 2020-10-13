@@ -18,7 +18,7 @@ New Tab Terminal agian to run frontend
 ```sh
 $ docker-compose exec frontend sh -c "npm install && npm run serve"
 ```
-
+It will run in port 8080
 
 ## run in production mode (https)
 ```sh
