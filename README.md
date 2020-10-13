@@ -14,6 +14,10 @@ New Tab Terminal agian
 ```sh
 $ docker-compose exec recorder sh -c "npm install && node app.js"
 ```
+New Tab Terminal agian to run frontend
+```sh
+$ docker-compose exec frontend sh -c "npm install && npm run serve"
+```
 
 
 ## run in production mode (https)
